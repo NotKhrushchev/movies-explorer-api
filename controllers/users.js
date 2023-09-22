@@ -2,10 +2,14 @@ const bcrypt = require('bcryptjs/dist/bcrypt');
 /** Статусы ошибок */
 const { CREATED, OK } = require('http-status-codes').StatusCodes;
 const { default: mongoose } = require('mongoose');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { DuplicateEmailErr, BadRequestErr } = require('../errors');
 
-/** Создание пользователя */
+const { JWT_SECRET = 'super-secret-key' } = process.env;
+const { DuplicateEmailErr, BadRequestErr } = require('../errors');
+const AuthorizationErr = require('../errors/AuthorizationErr');
+
+/** Аутентификация */
 const createUser = (req, res, next) => {
   const { email, password, name } = req.body;
   bcrypt.hash(password, 10)
@@ -35,6 +39,28 @@ const createUser = (req, res, next) => {
     });
 };
 
+/** Авторизация */
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  /** Возвращаю password в ответ */
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new AuthorizationErr();
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new AuthorizationErr();
+          }
+          //* * Создаю токен действующий 7 дней */
+          const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+          return res.send({ token });
+        });
+    })
+    .catch(next);
+};
+
 const getUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра авторизации */
   const { _id } = req.user;
@@ -49,4 +75,5 @@ const getUserInfo = (req, res, next) => {
 module.exports = {
   createUser,
   getUserInfo,
+  login,
 };

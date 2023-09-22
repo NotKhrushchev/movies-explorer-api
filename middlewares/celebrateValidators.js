@@ -8,13 +8,14 @@ const createUserCelebrate = celebrate({
   }),
 });
 
-const getUserInfoCelebrate = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().required().hex().length(24),
+const loginCelebrate = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
   }),
 });
 
 module.exports = {
   createUserCelebrate,
-  getUserInfoCelebrate,
+  loginCelebrate,
 };
