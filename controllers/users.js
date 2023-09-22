@@ -41,7 +41,10 @@ const getUserInfo = (req, res, next) => {
   User.findById(userId)
     /** Для работы DocumentNotFoundError */
     .orFail()
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      const { email, name } = user;
+      res.status(OK).send({ email, name })
+    })
     .catch((err) => {
       switch (err.constructor) {
         case mongoose.Error.CastError:
