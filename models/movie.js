@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { IMG_URL_REGEX, URL_REGEX } = require('../utils/constants');
+const { URL_REGEX } = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -26,7 +26,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле image обязательное'],
     validate: {
-      validator: (link) => IMG_URL_REGEX.test(link),
+      validator: (link) => URL_REGEX.test(link),
       message: 'Укажите корректную ссылку',
     },
   },
@@ -42,7 +42,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле thumbnail обязательное'],
     validate: {
-      validator: (link) => IMG_URL_REGEX.test(link),
+      validator: (link) => URL_REGEX.test(link),
       message: 'Укажите корректную ссылку',
     },
   },

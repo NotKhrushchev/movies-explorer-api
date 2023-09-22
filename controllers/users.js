@@ -12,6 +12,7 @@ const AuthorizationErr = require('../errors/AuthorizationErr');
 /** Аутентификация */
 const createUser = (req, res, next) => {
   const { email, password, name } = req.body;
+
   bcrypt.hash(password, 10)
     .then((hash) => User.create({ email, password: hash, name }))
     .then((postedUser) => {
@@ -53,7 +54,7 @@ const login = (req, res, next) => {
           if (!matched) {
             throw new AuthorizationErr();
           }
-          //* * Создаю токен действующий 7 дней */
+          //* * Создаю токен сроком на 7 дней */
           const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
           return res.send({ token });
         });
@@ -100,7 +101,7 @@ const editUserInfo = (req, res, next) => {
     .catch((err) => {
       switch (err.constructor) {
         case mongoose.Error.ValidationError:
-          next(new BadRequestErr('Переданы некорректные данные при обновлении пользователя'));
+          next(new BadRequestErr(err.message));
           break;
         case mongoose.Error.DocumentNotFoundError:
           next(new NotFoundErr('Пользователь по указанному id не найден'));
