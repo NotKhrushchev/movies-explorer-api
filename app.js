@@ -10,6 +10,7 @@ const { userRoute } = require('./routes/index');
 const { createUser, login } = require('./controllers/users');
 const { createUserCelebrate, loginCelebrate } = require('./middlewares/celebrateValidators');
 const { checkToken } = require('./middlewares/checkToken');
+const movieRoute = require('./routes/movies');
 
 const { PORT = 3000 } = process.env;
 const { DATABASE_URL = 'mongodb://127.0.0.1:27017/movie-explorer-api' } = process.env;
@@ -44,6 +45,9 @@ app.use(checkToken);
 
 /** Роуты для работы с пользователем */
 app.use('/users', userRoute);
+
+/** Роуты для работы с фильмами */
+app.use('/', movieRoute);
 
 /** Обработчик ошибок селебрейта */
 app.use(errors());

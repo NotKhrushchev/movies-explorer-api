@@ -61,7 +61,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-//* * Получение данных пользователя */
+/** Получение данных пользователя */
 const getUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра провеки jwt */
   const { _id } = req.user;
@@ -84,7 +84,7 @@ const getUserInfo = (req, res, next) => {
     });
 };
 
-//* * Изменение данных пользователя */
+/** Изменение данных пользователя */
 const editUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра провеки jwt */
   const { _id } = req.user;
