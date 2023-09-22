@@ -47,7 +47,7 @@ app.use(checkToken);
 app.use('/users', userRoute);
 
 /** Роуты для работы с фильмами */
-app.use('/', movieRoute);
+app.use('/movies', movieRoute);
 
 /** Обработчик ошибок селебрейта */
 app.use(errors());

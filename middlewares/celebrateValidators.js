@@ -39,9 +39,16 @@ const postMovieCelebrate = celebrate({
   }),
 });
 
+const deleteMovieCelebrate = celebrate({
+  params: Joi.object().keys({
+    movieId: Joi.number().required(),
+  }),
+});
+
 module.exports = {
   createUserCelebrate,
   loginCelebrate,
   editUserCelebrate,
   postMovieCelebrate,
+  deleteMovieCelebrate,
 };

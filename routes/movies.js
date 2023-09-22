@@ -1,11 +1,14 @@
 const movieRoute = require('express').Router();
-const { getSavedMovies, postMovie } = require('../controllers/movies');
-const { postMovieCelebrate } = require('../middlewares/celebrateValidators');
+const { getSavedMovies, postMovie, deleteMovie } = require('../controllers/movies');
+const { postMovieCelebrate, deleteMovieCelebrate } = require('../middlewares/celebrateValidators');
 
 /** Роут получения сохраненных фильмов */
-movieRoute.get('/movies', getSavedMovies);
+movieRoute.get('/', getSavedMovies);
 
 /** Роут создания фильма */
-movieRoute.post('/movies', postMovieCelebrate, postMovie);
+movieRoute.post('/', postMovieCelebrate, postMovie);
+
+/** Роут удаления фильма */
+movieRoute.delete('/:movieId', deleteMovieCelebrate, deleteMovie);
 
 module.exports = movieRoute;

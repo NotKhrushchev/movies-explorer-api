@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const { JWT_SECRET = 'super-secret-key' } = process.env;
-const { DuplicateEmailErr, BadRequestErr, NotFoundErr } = require('../errors');
+const { DuplicateEmailErr, BadRequestErr } = require('../errors');
 const AuthorizationErr = require('../errors/AuthorizationErr');
 
 /** Аутентификация */
@@ -43,6 +43,7 @@ const createUser = (req, res, next) => {
 /** Авторизация */
 const login = (req, res, next) => {
   const { email, password } = req.body;
+
   /** Возвращаю password в ответ */
   User.findOne({ email }).select('+password')
     .then((user) => {
@@ -66,23 +67,13 @@ const login = (req, res, next) => {
 const getUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра провеки jwt */
   const { _id } = req.user;
+
   User.findById(_id)
-    /** Для обработки ошибки DocumentNotFoundError */
-    .orFail()
     .then((user) => {
       const { email, name } = user;
       res.status(OK).send({ email, name });
     })
-    .catch((err) => {
-      switch (err.constructor) {
-        case mongoose.Error.DocumentNotFoundError:
-          next(new NotFoundErr('Пользователь по указанному id не найден'));
-          break;
-        default:
-          next(err);
-          break;
-      }
-    });
+    .catch(next);
 };
 
 /** Изменение данных пользователя */
@@ -90,21 +81,17 @@ const editUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра провеки jwt */
   const { _id } = req.user;
   const { email, name } = req.body;
+
   User.findByIdAndUpdate(
     _id,
     { email, name },
     { new: true, runValidators: true },
   )
-    /** Для обработки ошибки DocumentNotFoundError */
-    .orFail()
     .then((updatedUser) => res.status(OK).send(updatedUser))
     .catch((err) => {
       switch (err.constructor) {
         case mongoose.Error.ValidationError:
           next(new BadRequestErr(err.message));
-          break;
-        case mongoose.Error.DocumentNotFoundError:
-          next(new NotFoundErr('Пользователь по указанному id не найден'));
           break;
         default:
           next(err);
