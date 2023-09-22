@@ -3,6 +3,6 @@ const { getUserInfo } = require('../controllers/users');
 const { getUserInfoCelebrate } = require('../middlewares/celebrateValidators');
 
 /** Роут получения данных пользователя */
-userRoute.get('/:userId', getUserInfoCelebrate, getUserInfo);
+userRoute.get('/me', getUserInfoCelebrate, getUserInfo);
 
 module.exports = userRoute;

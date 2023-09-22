@@ -37,8 +37,8 @@ const createUser = (req, res, next) => {
 
 const getUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра авторизации */
-  const { userId } = req.user;
-  User.findById(userId)
+  const { _id } = req.user;
+  User.findById(_id)
     .then((user) => {
       const { email, name } = user;
       res.status(OK).send({ email, name });
