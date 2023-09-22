@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs/dist/bcrypt');
 const { CREATED, OK } = require('http-status-codes').StatusCodes;
 const { default: mongoose } = require('mongoose');
 const User = require('../models/user');
-const { DuplicateEmailErr, BadRequestErr, NotFoundErr } = require('../errors');
+const { DuplicateEmailErr, BadRequestErr } = require('../errors');
 
 /** Создание пользователя */
 const createUser = (req, res, next) => {
@@ -36,27 +36,14 @@ const createUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  /** Беру id из запроса */
-  const { userId } = req.params;
+  /** Беру id из мидлвэра авторизации */
+  const { userId } = req.user;
   User.findById(userId)
-    /** Для работы DocumentNotFoundError */
-    .orFail()
     .then((user) => {
       const { email, name } = user;
-      res.status(OK).send({ email, name })
+      res.status(OK).send({ email, name });
     })
-    .catch((err) => {
-      switch (err.constructor) {
-        case mongoose.Error.CastError:
-          next(new BadRequestErr('Передан невалидный id пользователя'));
-          break;
-        case mongoose.Error.DocumentNotFoundError:
-          next(new NotFoundErr('Пользователь по указанному id не найден'));
-          break;
-        default:
-          break;
-      }
-    });
+    .catch(next);
 };
 
 module.exports = {
