@@ -12,8 +12,6 @@ const { createUser, login } = require('./controllers/users');
 const { createUserCelebrate, loginCelebrate } = require('./middlewares/celebrateValidators');
 const { checkToken } = require('./middlewares/checkToken');
 const movieRoute = require('./routes/movies');
-const { NotFoundErr } = require('./errors');
-const { pageNotFound } = require('./utils/messages');
 
 const { PORT = 3000 } = process.env;
 const { DATABASE_URL = 'mongodb://127.0.0.1:27017/movie-explorer-api' } = process.env;
