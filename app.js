@@ -40,6 +40,11 @@ mongoose.connect(DATABASE_URL, {
 /** Логгер запросов */
 app.use(requestLogger);
 
+/** Обработка несуществующего роута */
+app.use('*', () => {
+  throw new NotFoundErr(pageNotFound);
+});
+
 /** Роут аутентификации */
 app.post('/signup', createUserCelebrate, createUser);
 
@@ -54,11 +59,6 @@ app.use('/users', userRoute);
 
 /** Роуты для работы с фильмами */
 app.use('/movies', movieRoute);
-
-/** Обработка несуществующего роута */
-app.use('*', () => {
-  throw new NotFoundErr(pageNotFound);
-});
 
 /** Логгер ошибок */
 app.use(errorLogger);
