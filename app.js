@@ -7,6 +7,7 @@ const { errors } = require('celebrate');
 const helmet = require('helmet');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { userRoute } = require('./routes/index');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { createUser, login } = require('./controllers/users');
 const { createUserCelebrate, loginCelebrate } = require('./middlewares/celebrateValidators');
 const { checkToken } = require('./middlewares/checkToken');
@@ -34,6 +35,9 @@ mongoose.connect(DATABASE_URL, {
   autoIndex: true,
 });
 
+/** Логгер запросов */
+app.use(requestLogger);
+
 /** Роут аутентификации */
 app.post('/signup', createUserCelebrate, createUser);
 
@@ -48,6 +52,9 @@ app.use('/users', userRoute);
 
 /** Роуты для работы с фильмами */
 app.use('/movies', movieRoute);
+
+/** Логгер ошибок */
+app.use(errorLogger);
 
 /** Обработчик ошибок селебрейта */
 app.use(errors());
