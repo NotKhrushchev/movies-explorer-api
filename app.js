@@ -6,12 +6,11 @@ const cors = require('cors');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const { errorHandler } = require('./middlewares/errorHandler');
-const { userRoute } = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { createUser, login } = require('./controllers/users');
-const { createUserCelebrate, loginCelebrate } = require('./middlewares/celebrateValidators');
-const { checkToken } = require('./middlewares/checkToken');
-const movieRoute = require('./routes/movies');
+const { NotFoundErr } = require('./errors');
+const { limiter } = require('./middlewares/rateLimiter');
+const { pageNotFound } = require('./utils/messages');
+const router = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
 const { DATABASE_URL = 'mongodb://127.0.0.1:27017/movie-explorer-api' } = process.env;
@@ -24,6 +23,9 @@ app.use(cors());
 
 /** Дополнительная защита промежуточной обработки */
 app.use(helmet());
+
+/** Лимит по кол-ву запросов */
+app.use(limiter);
 
 /** Парсер данных в json */
 app.use(express.json());
@@ -38,20 +40,13 @@ mongoose.connect(DATABASE_URL, {
 /** Логгер запросов */
 app.use(requestLogger);
 
-/** Роут аутентификации */
-app.post('/signup', createUserCelebrate, createUser);
+/** Маршруты */
+app.use(router);
 
-/** Роут авторизации */
-app.post('/signin', loginCelebrate, login);
-
-/** Защита нижеперечисленных роутов */
-app.use(checkToken);
-
-/** Роуты для работы с пользователем */
-app.use('/users', userRoute);
-
-/** Роуты для работы с фильмами */
-app.use('/movies', movieRoute);
+/** Обработка несуществующих маршрутов */
+app.get('*', () => {
+  throw new NotFoundErr(pageNotFound);
+});
 
 /** Логгер ошибок */
 app.use(errorLogger);

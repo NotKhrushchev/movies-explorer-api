@@ -8,6 +8,7 @@ const User = require('../models/user');
 const { JWT_SECRET = 'super-secret-key' } = process.env;
 const { DuplicateEmailErr, BadRequestErr } = require('../errors');
 const AuthorizationErr = require('../errors/AuthorizationErr');
+const SameDataErr = require('../errors/SameDataErr');
 
 /** Аутентификация */
 const createUser = (req, res, next) => {
@@ -81,23 +82,26 @@ const editUserInfo = (req, res, next) => {
   /** Беру id из мидлвэра провеки jwt */
   const { _id } = req.user;
   const { email, name } = req.body;
-
-  User.findByIdAndUpdate(
-    _id,
-    { email, name },
-    { new: true, runValidators: true },
-  )
-    .then((updatedUser) => res.status(OK).send(updatedUser))
-    .catch((err) => {
-      switch (err.constructor) {
-        case mongoose.Error.ValidationError:
-          next(new BadRequestErr(err.message));
-          break;
-        default:
-          next(err);
-          break;
+  User.findById(_id)
+    .then((user) => {
+      /** Проверка на совпадение данных */
+      if (user.email === email && user.name === name) {
+        throw new SameDataErr();
       }
-    });
+      User.updateOne({ _id }, { email, name })
+        .then(() => res.status(OK))
+        .catch((err) => {
+          switch (err.constructor) {
+            case mongoose.Error.ValidationError:
+              next(new BadRequestErr(err.message));
+              break;
+            default:
+              next(err);
+              break;
+          }
+        });
+    })
+    .catch(next);
 };
 
 module.exports = {

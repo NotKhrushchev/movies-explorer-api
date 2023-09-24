@@ -1,7 +1,8 @@
 const { UNAUTHORIZED } = require('http-status-codes').StatusCodes;
+const { wrongEmailOrPassword } = require('../utils/messages');
 
 class AuthorizationErr extends Error {
-  constructor(message = 'Неправильные почта или пароль') {
+  constructor(message = wrongEmailOrPassword) {
     super(message);
     this.statusCode = UNAUTHORIZED;
   }

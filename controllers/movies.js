@@ -1,9 +1,8 @@
 const { OK, CREATED } = require('http-status-codes').StatusCodes;
 const { default: mongoose } = require('mongoose');
-const { BadRequestErr, NotFoundErr } = require('../errors');
+const { BadRequestErr, NotFoundErr, AccessErr } = require('../errors');
 const Movie = require('../models/movie');
 const { filmNotFoundById, notValidFilmId, filmDeleted } = require('../utils/messages');
-const AccessErr = require('../errors/AccessErr');
 
 /** Получение сохраненных фильмов */
 const getSavedMovies = (req, res, next) => {
@@ -39,7 +38,7 @@ const deleteMovie = (req, res, next) => {
   const { _id } = req.user;
   const { movieId } = req.params;
 
-  Movie.findOne({ movieId })
+  Movie.findOne({ movieId, owner: _id })
     .orFail()
     .then((movie) => {
       if (!movie.owner.equals(_id)) {

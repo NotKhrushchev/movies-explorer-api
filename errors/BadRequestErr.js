@@ -1,7 +1,8 @@
 const { BAD_REQUEST } = require('http-status-codes').StatusCodes;
+const { sendNotValidData } = require('../utils/messages');
 
 class BadRequestErr extends Error {
-  constructor(message = 'Переданы невалидные данные') {
+  constructor(message = sendNotValidData) {
     super(message);
     this.statusCode = BAD_REQUEST;
   }
