@@ -7,7 +7,6 @@ const wrongEmailOrPassword = 'Неправильные почта или пар�
 const sendNotValidData = 'Переданы невалидные данные';
 const emailAlreadyExist = 'Указанный email уже существует';
 const notFound = 'Не найдено';
-const dataMatches = 'Данные совпадают';
 const authRequired = 'Необходима авторизация';
 const serverError = 'На сервере произошла ошибка';
 
@@ -21,7 +20,6 @@ module.exports = {
   sendNotValidData,
   emailAlreadyExist,
   notFound,
-  dataMatches,
   authRequired,
   serverError,
 };
