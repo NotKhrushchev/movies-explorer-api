@@ -7,13 +7,11 @@ const { errors } = require('celebrate');
 const helmet = require('helmet');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { NotFoundErr } = require('./errors');
 const { limiter } = require('./middlewares/rateLimiter');
-const { pageNotFound } = require('./utils/messages');
 const router = require('./routes/index');
 
 const { PORT = 3000 } = process.env;
-const { DATABASE_URL = 'mongodb://127.0.0.1:27017/movie-explorer-api' } = process.env;
+const { DATABASE_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process.env;
 
 /** Точка входа */
 const app = express();
@@ -42,11 +40,6 @@ app.use(requestLogger);
 
 /** Маршруты */
 app.use(router);
-
-/** Обработка несуществующих маршрутов */
-app.get('*', () => {
-  throw new NotFoundErr(pageNotFound);
-});
 
 /** Логгер ошибок */
 app.use(errorLogger);

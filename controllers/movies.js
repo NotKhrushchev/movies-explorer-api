@@ -44,7 +44,7 @@ const deleteMovie = (req, res, next) => {
       if (!movie.owner.equals(_id)) {
         throw new AccessErr();
       }
-      Movie.deleteOne({ movieId })
+      Movie.deleteOne({ movieId, owner: _id })
         .then(() => res.status(OK).send({ message: filmDeleted }))
         .catch(next);
     })

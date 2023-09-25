@@ -91,6 +91,10 @@ const editUserInfo = (req, res, next) => {
       User.updateOne({ _id }, { email, name })
         .then(() => res.status(OK))
         .catch((err) => {
+          if (err.code === 11000) {
+            next(new DuplicateEmailErr());
+            return;
+          }
           switch (err.constructor) {
             case mongoose.Error.ValidationError:
               next(new BadRequestErr(err.message));
