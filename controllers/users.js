@@ -8,6 +8,7 @@ const User = require('../models/user');
 const { JWT_SECRET = 'super-secret-key' } = process.env;
 const { DuplicateEmailErr, BadRequestErr } = require('../errors');
 const AuthorizationErr = require('../errors/AuthorizationErr');
+const { userUpdated } = require('../utils/messages');
 
 /** Аутентификация */
 const createUser = (req, res, next) => {
@@ -86,7 +87,7 @@ const editUserInfo = (req, res, next) => {
     { email, name },
     { new: true, runValidators: true },
   )
-    .then(() => res.status(OK))
+    .then(() => res.status(OK).send({ message: userUpdated }))
     .catch((err) => {
       if (err.code === 11000) {
         next(new DuplicateEmailErr());

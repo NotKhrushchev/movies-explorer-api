@@ -1,6 +1,7 @@
 const filmNotFoundById = 'Фильм по указанному id не найден';
 const notValidFilmId = 'Передан невалидный id фильма';
 const filmDeleted = 'Фильм успешно удален';
+const userUpdated = 'Данные пользователя обновлены';
 const pageNotFound = 'Страница не найдена';
 const accessError = 'Ошибка доступа';
 const wrongEmailOrPassword = 'Неправильные почта или пароль';
@@ -22,4 +23,5 @@ module.exports = {
   notFound,
   authRequired,
   serverError,
+  userUpdated
 };
